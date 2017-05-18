@@ -1,0 +1,22 @@
+#diff_contents {
+    /**font-family: 'Playfair Display', serif;/**/
+    /**/font-family: 'Open Sans', sans-serif;/**/
+    padding: 0 100px 0 100px;
+    font-size: 1.2em;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.removed {
+    background-color: #ecc;
+    color: #855;
+}
+
+.added {
+    background-color: #cec;
+    color: #030;
+}
+
+.file {
+    font-family: "Courier New", courier, monospace;
+}
