@@ -23,6 +23,14 @@ def run_command(args, failure_str):
     return output
 
 
+def refresh_repository(repo_path):
+    if not os.path.exists(repo_path):
+        raise Exception("No initialized repository at {}".format(repo_path))
+    with temp_chdir(repo_path):
+        args = ['git', 'fetch']
+        run_command(args, "Failed to fetch repository: {}")
+
+
 def prepare_repository(repo_url, repo_path):
     if not os.path.exists(repo_path):
         print("No repository detected at {}".format(repo_path))
@@ -32,21 +40,15 @@ def prepare_repository(repo_url, repo_path):
             args = ['git', 'init']
             run_command(args, "Failed to initialize repository: {}")
 
-            args = ['git', 'fetch', repo_url]
+            args = ['git', 'remote', 'add', 'origin', repo_url]
             run_command(args, "Failed to fetch repository: {}")
 
-
-def refresh_repository(repo_path):
-    if not os.path.exists(repo_path):
-        raise Exception("No initialized repository at {}".format(repo_path))
-    with temp_chdir(repo_path):
-        args = ['git', 'fetch']
-        run_command(args, "Failed to fetch repository: {}")
+            refresh_repository(repo_path)
 
 
 def branch_list(working_tree_dir):
     with temp_chdir(working_tree_dir):
-        args = ['git', 'branch']
+        args = ['git', 'branch', '-r']
         p = Popen(args, stdout=PIPE, stderr=STDOUT)
         output, err = p.communicate()
         if err:

@@ -43,8 +43,9 @@ def refresh():
 @app.route('/branches')
 def branches():
     branches = branch_list(REPO_PATH)
+    branches = [branch.strip() for branch in branches if branch.strip()]
     return dumps(branches)
 
 if __name__ == '__main__':
     prepare_repository(REPO_URL, REPO_PATH)
-    app.run()
+    app.run(host="0.0.0.0", port=9876)
