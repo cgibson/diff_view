@@ -5,7 +5,8 @@ from repo_diff import *
 app = Flask(__name__)
 app.debug = True
 
-REPO_PATH = os.environ["REPO_PATH"]
+REPO_URL = 'git@bitbucket.org:cowriterie/anh.git'
+REPO_PATH = os.path.expandvars('$HOME/.diffview_repo')
 
 
 @app.route('/')
@@ -25,12 +26,18 @@ def css(path):
 
 @app.route('/generate')
 def generate():
-    ref_a = request.args["ref_a"]
-    ref_b = request.args["ref_b"]
+    ref_a = request.args['ref_a']
+    ref_b = request.args['ref_b']
 
     diff = diff_from_sha(REPO_PATH, ref_a, ref_b, word_diff=True)
     markdown = generate_diff_markdown(diff)
     return markdown
+
+
+@app.route('/refresh')
+def refresh():
+    refresh_repository(REPO_PATH)
+    return dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 
 @app.route('/branches')
@@ -39,4 +46,5 @@ def branches():
     return dumps(branches)
 
 if __name__ == '__main__':
+    prepare_repository(REPO_URL, REPO_PATH)
     app.run()

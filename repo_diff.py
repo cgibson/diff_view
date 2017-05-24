@@ -15,6 +15,35 @@ def temp_chdir(path):
         os.chdir(starting_directory)
 
 
+def run_command(args, failure_str):
+    p = Popen(args, stdout=PIPE, stderr=STDOUT)
+    output, err = p.communicate()
+    if err:
+        raise Exception(failure_str.format(err))
+    return output
+
+
+def prepare_repository(repo_url, repo_path):
+    if not os.path.exists(repo_path):
+        print("No repository detected at {}".format(repo_path))
+        print("Pulling {}...".format(repo_url))
+        os.makedirs(repo_path)
+        with temp_chdir(repo_path):
+            args = ['git', 'init']
+            run_command(args, "Failed to initialize repository: {}")
+
+            args = ['git', 'fetch', repo_url]
+            run_command(args, "Failed to fetch repository: {}")
+
+
+def refresh_repository(repo_path):
+    if not os.path.exists(repo_path):
+        raise Exception("No initialized repository at {}".format(repo_path))
+    with temp_chdir(repo_path):
+        args = ['git', 'fetch']
+        run_command(args, "Failed to fetch repository: {}")
+
+
 def branch_list(working_tree_dir):
     with temp_chdir(working_tree_dir):
         args = ['git', 'branch']
@@ -26,8 +55,8 @@ def branch_list(working_tree_dir):
         return output.split("\n")
 
 
-def diff_from_sha(working_tree_dir, ref_a, ref_b, word_diff=False):
-    with temp_chdir(working_tree_dir):
+def diff_from_sha(repo_dir, ref_a, ref_b, word_diff=False):
+    with temp_chdir(repo_dir):
         args = ['git', 'diff', ref_a, ref_b, '--unified=2000']
         if word_diff:
             args.append('--word-diff')

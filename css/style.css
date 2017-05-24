@@ -20,3 +20,7 @@
 .file {
     font-family: "Courier New", courier, monospace;
 }
+
+button {
+    transition: all 0.3s ease 0s;
+}

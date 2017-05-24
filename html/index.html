@@ -2,41 +2,31 @@
 <html lang="en">
 <head>
     <title>Diff Viewer</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-    <!--
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    !-->
+
+    <!-- JQuery, useful for bootstrap, AJAX calls and the typeahead feature -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <!-- Bootstrap CSS/JS for theming -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap TypeAhead. Used in auto-completing the ref input fields -->
     <script src="/js/bootstrap3-typeahead.min.js"></script>
 
+    <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans|Playfair+Display">
 
-    <link rel="stylesheet" href="/css/style.css">
-
+    <!-- URI.js. Used when parsing and rewriting URLs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.18.10/URI.min.js"></script>
 
+    <!-- internal CSS/JS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/diff_view.js"></script>
 
-
-    <script language="JavaScript">
-
-        function generate_diff() {
-            var ref_a = $('#ref_a').val();
-            var ref_b = $('#ref_b').val();
-            $.get("/generate",
-                  {ref_a: ref_a, ref_b: ref_b},
-                  function( data ) {
-                    $( "#diff_contents" ).html( data );
-            });
-
-            var uri = new URI(window.location.href);
-            uri.query({ref_a:ref_a, ref_b:ref_b});
-
-            history.pushState(null, null, uri.toString());
-        };
-    </script>
 
 </head>
 <body>
@@ -60,7 +50,12 @@
             <input id="ref_b" type="text" data-provide="typeahead" placeholder="Ref B">
 
             <span style="width: 10px;"></span>
-            <button type="button" class="btn btn-primary" onclick="generate_diff();">Generate Diff</button>
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-primary" onclick="generate_diff();">Generate Diff</button>
+                <button type="button" id="refresh_repo_btn" class="btn btn-primary btn-sm" onclick="refresh_repo()">
+                    <i class="fa fa-refresh" id="refresh_repo_icon" aria-hidden="true"></i>
+                </button>
+            </div>
 
         </div>
     </nav>
@@ -69,30 +64,8 @@
 </div>
 
     <script language="JavaScript">
-        $.get('/branches', function(data){
-            $('#ref_a').typeahead({ source:data });
-            $('#ref_b').typeahead({ source:data });
-        },'json');
-
-        $.urlParam = function(name){
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results === null){
-               return null;
-            }
-            else{
-               return results[1] || 0;
-            }
-        }
-
-        var ref_a = $.urlParam('ref_a');
-        var ref_b = $.urlParam('ref_b');
-
-        if (ref_a !== null && ref_b !== null) {
-            $('#ref_a').val(ref_a);
-            $('#ref_b').val(ref_b);
-
-            generate_diff();
-        }
+        update_branch_autocomplete();
+        read_url_refs();
     </script>
 
 
