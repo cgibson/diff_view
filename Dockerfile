@@ -1,5 +1,5 @@
 FROM python:latest
-MAINTAINER Chris Gibson "cgibson@mrvoxel.com"
+MAINTAINER Christopher Gibson "cgibson@mrvoxel.com"
 
 # Copy the app source/data
 COPY . /app
