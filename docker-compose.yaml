@@ -3,6 +3,7 @@ version: "3"
 services:
   diff_view:
     container_name: diff_view
+    restart: always
     build:
       context: ./diff_view
     volumes:
