@@ -1,4 +1,4 @@
-FROM python:3.4.3
+FROM python:latest
 MAINTAINER Chris Gibson "cgibson@mrvoxel.com"
 
 # Copy the app source/data
@@ -14,9 +14,6 @@ RUN mkdir -p /root/.ssh && \
 
 # Tell ssh where to find the identify file.
 RUN echo "    IdentityFile /root/.ssh/id_rsa" >> /etc/ssh/ssh_config
-
-# Reassure ssh we know bitbucket.com
-RUN ssh-keyscan -t rsa bitbucket.com > ~/.ssh/known_hosts
 
 ENTRYPOINT ["python"]
 CMD ["app.py"]
