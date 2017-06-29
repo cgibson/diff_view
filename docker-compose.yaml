@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  diff_view:
+    container_name: diff_view
+    build:
+      context: ./diff_view
+    volumes:
+      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+      - $HOME/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub
+      - $HOME/.ssh/known_hosts:/root/.ssh/known_hosts
+    ports:
+      - 9876:9876
