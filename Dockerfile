@@ -1,9 +1,5 @@
-FROM python:latest
+FROM python:3.4.3
 MAINTAINER Chris Gibson "cgibson@mrvoxel.com"
-
-# Arguments for SSH public/private keys
-ARG ssh_prv_key
-ARG ssh_pub_key
 
 # Copy the app source/data
 COPY . /app
@@ -14,14 +10,13 @@ RUN pip install -r requirements.txt
 
 # Authorize bitbucket as an SSH host
 RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh && \
-    ssh-keyscan bitbucket.com > /root/.ssh/known_hosts
+    chmod 0700 /root/.ssh
 
-# Add the SSH public/private keys and set permissions
-RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
-    echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
-    chmod 600 /root/.ssh/id_rsa && \
-    chmod 600 /root/.ssh/id_rsa.pub
+# Tell ssh where to find the identify file.
+RUN echo "    IdentityFile /root/.ssh/id_rsa" >> /etc/ssh/ssh_config
+
+# Reassure ssh we know bitbucket.com
+RUN ssh-keyscan -t rsa bitbucket.com > ~/.ssh/known_hosts
 
 ENTRYPOINT ["python"]
 CMD ["app.py"]

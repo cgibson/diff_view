@@ -20,7 +20,7 @@ def run_command(args, failure_str):
     output, err = p.communicate()
     if err:
         raise Exception(failure_str.format(err))
-    return output
+    return output.decode('utf-8')
 
 
 def refresh_repository(repo_path):
@@ -53,7 +53,7 @@ def branch_list(working_tree_dir):
         output, err = p.communicate()
         if err:
             raise Exception("Failed git call: %s" % str(err))
-        output = output.replace('* ', '')
+        output = output.decode('utf-8').replace('* ', '')
         return output.split("\n")
 
 
@@ -66,7 +66,7 @@ def diff_from_sha(repo_dir, ref_a, ref_b, word_diff=False):
         output, err = p.communicate()
         if err:
             raise Exception("Failed git call: %s" % str(err))
-        return output.split("\n")
+        return output.decode('utf-8').split("\n")
 
 
 def diff_replace(diff):
