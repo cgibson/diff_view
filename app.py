@@ -2,9 +2,6 @@ from flask import Flask, send_from_directory, request
 from json import dumps
 from repo_diff import *
 
-app = Flask(__name__)
-app.debug = True
-
 REPO_URL = 'git@bitbucket.org:cowriterie/anh.git'
 REPO_PATH = os.path.expandvars('$HOME/.diffview_repo')
 
@@ -45,7 +42,3 @@ def branches():
     branches = branch_list(REPO_PATH)
     branches = [branch.strip() for branch in branches if branch.strip()]
     return dumps(branches)
-
-if __name__ == '__main__':
-    prepare_repository(REPO_URL, REPO_PATH)
-    app.run(host="0.0.0.0", port=9876)

@@ -7,10 +7,11 @@ WORKDIR /app
 
 # Install python requirements
 RUN pip install -r requirements.txt
+EXPOSE 5000
 
 # Authorize bitbucket as an SSH host
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh
 
-ENTRYPOINT ["python"]
-CMD ["app.py"]
+ENV FLASK_APP /app/app.py
+CMD ["flask", "run", "--host=0.0.0.0"]
