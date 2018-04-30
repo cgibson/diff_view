@@ -5,6 +5,8 @@ from repo_diff import *
 REPO_URL = 'git@bitbucket.org:cowriterie/anh.git'
 REPO_PATH = os.path.expandvars('$HOME/.diffview_repo')
 
+app = Flask(__name__)
+prepare_repository(REPO_URL, REPO_PATH)
 
 @app.route('/')
 def index():
